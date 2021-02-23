@@ -49,3 +49,5 @@
 #define	PCF8523_MONTH_MASK	0x1f
 
 // End Definitions imported from OpenBSD
+
+#endif
