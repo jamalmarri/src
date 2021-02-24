@@ -79,7 +79,7 @@ device	maxrtc
 attach	maxrtc at iic
 file	dev/i2c/max6900.c			maxrtc
 
-# NXP/Philips PCF8563 Real Time Clock
+# NXP/Philips PCF8563 Real Time Clock 
 device	pcf8563rtc
 attach	pcf8563rtc at iic
 file	dev/i2c/pcf8563.c			pcf8563rtc
@@ -344,7 +344,7 @@ device	tsllux: sysmon_envsys
 attach	tsllux at iic
 file	dev/i2c/tsllux.c			tsllux
 
-# Philips/NXP TEA5767 
+# Philips/NXP TEA5767
 device tea5767radio : radiodev
 attach tea5767radio at iic
 file dev/i2c/tea5767.c				tea5767radio
@@ -409,3 +409,8 @@ file	dev/i2c/pcagpio.c			pcagpio
 device	pcf8574io: leds, sysmon_envsys
 attach	pcf8574io at iic
 file	dev/i2c/pcf8574.c			pcf8574io
+
+# NXP PCF8523 Real Time Clock RTC
+device pcf8523.c
+attach pcf8523 at iic
+file dev/i2c/pcf8523.c		pcf8523
