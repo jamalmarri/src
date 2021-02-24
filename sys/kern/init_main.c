@@ -640,6 +640,7 @@ main(void)
 	 * wait for us to inform it that the root file system has been
 	 * mounted.
 	 */
+	printf("This is a prototype kernel from the netbsd poweron group\n");
 	if (fork1(l, 0, SIGCHLD, NULL, 0, start_init, NULL, NULL))
 		panic("fork init");
 
