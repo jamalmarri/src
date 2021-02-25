@@ -36,6 +36,8 @@ void pcf8523_attach(device_t parent, device_t self, void *aux){
   struct i2c_attach_args *ia = aux;
   u_int8_t cmdbuf[1], csr;
 
+	printf("i2c attach called (RTC8523 TEST)\n");
+
   sc->sc_tag = ia->ia_tag;
   sc->sc_address = ia->ia_addr;
   sc->sc_dev = self;
@@ -46,6 +48,7 @@ void pcf8523_attach(device_t parent, device_t self, void *aux){
   cmdbuf[0] =n PCF8523_REG_CSR;
   if(iic_exec(sc->sc_tag, I2C_OP_READ_WITH_STOP, sc->sc_address, cmdbuf, 1 &csr, 1,0) != 0){
     aprint_error_dev(self, "unable to read CSR\n");
+		printf("i2c exec called to attach device (RTC8523 TEST)\n");
     return;
   }
   sc->sc_open = 0;
@@ -63,12 +66,17 @@ pcf8523rtc_match(device_t parent, cfdata_t cf, void *aux)
 	struct i2c_attach_args *ia = aux;
 	int match_result;
 
-	if (iic_use_direct_match(ia, cf, compat_data, &match_result))
-		return match_result;
+	printf("i2c match called (RTC8523 TEST)\n");
 
+	if (iic_use_direct_match(ia, cf, compat_data, &match_result)){
+		printf("Getting i2c device address (RTC8523 TEST) \n");
+		return match_result;
+	}
 	/* indirect config - check typical address */
-	if (ia->ia_addr == PCF8523_ADDR)
+	if (ia->ia_addr == PCF8523_ADDR){
+		printf("Checking i2c device address (RTC8523 TEST) \n");
 		return I2C_MATCH_ADDRESS_ONLY;
+	}
 
 	return 0;
 }
