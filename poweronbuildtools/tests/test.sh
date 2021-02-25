@@ -7,7 +7,7 @@ FAILED_TESTS=0
 PASSED_TESTS=0
 
 # query dmesg. Do we see any output from the attach/match functions?
-if sudo dmesg | grep -q "RTC8523 TEST"; then
+if dmesg | grep -q "RTC8523 TEST"; then
   echo -e "\033[38;5;2m[SUCCESS]\033[0m dmesg output detected"
   ((PASSED_TESTS=PASSED_TESTS+1))
 else
