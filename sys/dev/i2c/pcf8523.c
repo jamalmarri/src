@@ -40,35 +40,35 @@
 
 #include <dev/i2c/i2cvar.h>
 
-struct pcfrtc_softc {
+struct pcf8523rtc_softc {
 	struct device sc_dev;
 	i2c_tag_t sc_tag;
 	int sc_address;
 	struct todr_chip_handle sc_todr;
 };
 
-int pcfrtc_match(struct device *, void *, void *);
-void pcfrtc_attach(struct device *, struct device *, void *);
+int pcf8523rtc_match(struct device *, void *, void *);
+void pcf8523rtc_attach(struct device *, struct device *, void *);
 
-struct cfattach pcfrtc_ca = {
-	sizeof(struct pcfrtc_softc), pcfrtc_match, pcfrtc_attach
+struct cfattach pcf8523rtc_ca = {
+	sizeof(struct pcf8523rtc_softc), pcf8523rtc_match, pcf8523rtc_attach
 };
 
-struct cfdriver pcfrtc_cd = {
-	NULL, "pcfrtc", DV_DULL
+struct cfdriver pcf8523rtc_cd = {
+	NULL, "pcf8523rtc", DV_DULL
 };
 
-uint8_t pcfrtc_reg_read(struct pcfrtc_softc *, int);
-void pcfrtc_reg_write(struct pcfrtc_softc *, int, uint8_t);
-int pcfrtc_clock_read(struct pcfrtc_softc *, struct clock_ymdhms *);
-int pcfrtc_clock_write(struct pcfrtc_softc *, struct clock_ymdhms *);
-int pcfrtc_gettime(struct todr_chip_handle *, struct timeval *);
-int pcfrtc_settime(struct todr_chip_handle *, struct timeval *);
-int pcfrtc_getcal(struct todr_chip_handle *, int *);
-int pcfrtc_setcal(struct todr_chip_handle *, int);
+uint8_t pcf8523rtc_reg_read(struct pcf8523rtc_softc *, int);
+void pcf8523rtc_reg_write(struct pcf8523rtc_softc *, int, uint8_t);
+int pcf8523rtc_clock_read(struct pcf8523rtc_softc *, struct clock_ymdhms *);
+int pcf8523rtc_clock_write(struct pcf8523rtc_softc *, struct clock_ymdhms *);
+int pcf8523rtc_gettime(struct todr_chip_handle *, struct timeval *);
+int pcf8523rtc_settime(struct todr_chip_handle *, struct timeval *);
+int pcf8523rtc_getcal(struct todr_chip_handle *, int *);
+int pcf8523rtc_setcal(struct todr_chip_handle *, int);
 
 int
-pcfrtc_match(struct device *parent, void *v, void *arg)
+pcf8523rtc_match(struct device *parent, void *v, void *arg)
 {
 	struct i2c_attach_args *ia = arg;
 
@@ -80,19 +80,19 @@ pcfrtc_match(struct device *parent, void *v, void *arg)
 }
 
 void
-pcfrtc_attach(struct device *parent, struct device *self, void *arg)
+pcf8523rtc_attach(struct device *parent, struct device *self, void *arg)
 {
-	struct pcfrtc_softc *sc = (struct pcfrtc_softc *)self;
+	struct pcf8523rtc_softc *sc = (struct pcf8523rtc_softc *)self;
 	struct i2c_attach_args *ia = arg;
 	uint8_t reg;
 
 	sc->sc_tag = ia->ia_tag;
 	sc->sc_address = ia->ia_addr;
 	sc->sc_todr.cookie = sc;
-	sc->sc_todr.todr_gettime = pcfrtc_gettime;
-	sc->sc_todr.todr_settime = pcfrtc_settime;
-	sc->sc_todr.todr_getcal = pcfrtc_getcal;
-	sc->sc_todr.todr_setcal = pcfrtc_setcal;
+	sc->sc_todr.todr_gettime = pcf8523rtc_gettime;
+	sc->sc_todr.todr_settime = pcf8523rtc_settime;
+	sc->sc_todr.todr_getcal = pcf8523rtc_getcal;
+	sc->sc_todr.todr_setcal = pcf8523rtc_setcal;
 	sc->sc_todr.todr_setwen = NULL;
 
 #if 0
@@ -109,27 +109,27 @@ pcfrtc_attach(struct device *parent, struct device *self, void *arg)
 	 * Enable battery switch-over and battery low detection in
 	 * standard mode, and switch to 24 hour mode.
 	 */
-	reg = pcfrtc_reg_read(sc, PCF8523_CONTROL3);
+	reg = pcf8523rtc_reg_read(sc, PCF8523_CONTROL3);
 	reg &= ~PCF8523_CONTROL3_PM_MASK;
-	pcfrtc_reg_write(sc, PCF8523_CONTROL3, reg);
-	reg = pcfrtc_reg_read(sc, PCF8523_CONTROL1);
+	pcf8523rtc_reg_write(sc, PCF8523_CONTROL3, reg);
+	reg = pcf8523rtc_reg_read(sc, PCF8523_CONTROL1);
 	reg &= ~PCF8523_CONTROL1_12_24;
 	reg &= ~PCF8523_CONTROL1_STOP;
-	pcfrtc_reg_write(sc, PCF8523_CONTROL1, reg);
+	pcf8523rtc_reg_write(sc, PCF8523_CONTROL1, reg);
 
 	/* Report battery status. */
-	reg = pcfrtc_reg_read(sc, PCF8523_CONTROL3);
+	reg = pcf8523rtc_reg_read(sc, PCF8523_CONTROL3);
 	printf(": battery %s\n", (reg & PCF8523_CONTROL3_BLF) ? "low" : "ok");
 }
 
 int
-pcfrtc_gettime(struct todr_chip_handle *ch, struct timeval *tv)
+pcf8523rtc_gettime(struct todr_chip_handle *ch, struct timeval *tv)
 {
-	struct pcfrtc_softc *sc = ch->cookie;
+	struct pcf8523rtc_softc *sc = ch->cookie;
 	struct clock_ymdhms dt;
 
 	memset(&dt, 0, sizeof(dt));
-	if (pcfrtc_clock_read(sc, &dt) == 0)
+	if (pcf8523rtc_clock_read(sc, &dt) == 0)
 		return (-1);
 
 	tv->tv_sec = clock_ymdhms_to_secs(&dt);
@@ -138,40 +138,40 @@ pcfrtc_gettime(struct todr_chip_handle *ch, struct timeval *tv)
 }
 
 int
-pcfrtc_settime(struct todr_chip_handle *ch, struct timeval *tv)
+pcf8523rtc_settime(struct todr_chip_handle *ch, struct timeval *tv)
 {
-	struct pcfrtc_softc *sc = ch->cookie;
+	struct pcf8523rtc_softc *sc = ch->cookie;
 	struct clock_ymdhms dt;
 	uint8_t reg;
 
 	clock_secs_to_ymdhms(tv->tv_sec, &dt);
-	if (pcfrtc_clock_write(sc, &dt) == 0)
+	if (pcf8523rtc_clock_write(sc, &dt) == 0)
 		return (-1);
 
 	/* Clear OS flag.  */
-	reg = pcfrtc_reg_read(sc, PCF8523_SECONDS);
+	reg = pcf8523rtc_reg_read(sc, PCF8523_SECONDS);
 	if (reg & PCF8523_SECONDS_OS) {
 		reg &= ~PCF8523_SECONDS_OS;
-		pcfrtc_reg_write(sc, PCF8523_SECONDS, reg);
+		pcf8523rtc_reg_write(sc, PCF8523_SECONDS, reg);
 	}
 
 	return (0);
 }
 
 int
-pcfrtc_setcal(struct todr_chip_handle *ch, int cal)
+pcf8523rtc_setcal(struct todr_chip_handle *ch, int cal)
 {
 	return (EOPNOTSUPP);
 }
 
 int
-pcfrtc_getcal(struct todr_chip_handle *ch, int *cal)
+pcf8523rtc_getcal(struct todr_chip_handle *ch, int *cal)
 {
 	return (EOPNOTSUPP);
 }
 
 uint8_t
-pcfrtc_reg_read(struct pcfrtc_softc *sc, int reg)
+pcf8523rtc_reg_read(struct pcf8523rtc_softc *sc, int reg)
 {
 	uint8_t cmd = reg;
 	uint8_t val;
@@ -182,7 +182,7 @@ pcfrtc_reg_read(struct pcfrtc_softc *sc, int reg)
 	    iic_exec(sc->sc_tag, I2C_OP_READ_WITH_STOP, sc->sc_address,
 	    NULL, 0, &val, sizeof val, I2C_F_POLL)) {
 		iic_release_bus(sc->sc_tag, I2C_F_POLL);
-		printf("%s: pcfrtc_reg_read: failed to read reg%d\n",
+		printf("%s: pcf8523rtc_reg_read: failed to read reg%d\n",
 		    sc->sc_dev.dv_xname, reg);
 		return 0;
 	}
@@ -191,7 +191,7 @@ pcfrtc_reg_read(struct pcfrtc_softc *sc, int reg)
 }
 
 void
-pcfrtc_reg_write(struct pcfrtc_softc *sc, int reg, uint8_t val)
+pcf8523rtc_reg_write(struct pcf8523rtc_softc *sc, int reg, uint8_t val)
 {
 	uint8_t cmd = reg;
 
@@ -199,7 +199,7 @@ pcfrtc_reg_write(struct pcfrtc_softc *sc, int reg, uint8_t val)
 	if (iic_exec(sc->sc_tag, I2C_OP_WRITE_WITH_STOP, sc->sc_address,
 	    &cmd, sizeof cmd, &val, sizeof val, I2C_F_POLL)) {
 		iic_release_bus(sc->sc_tag, I2C_F_POLL);
-		printf("%s: pcfrtc_reg_write: failed to write reg%d\n",
+		printf("%s: pcf8523rtc_reg_write: failed to write reg%d\n",
 		    sc->sc_dev.dv_xname, reg);
 		return;
 	}
@@ -207,7 +207,7 @@ pcfrtc_reg_write(struct pcfrtc_softc *sc, int reg, uint8_t val)
 }
 
 int
-pcfrtc_clock_read(struct pcfrtc_softc *sc, struct clock_ymdhms *dt)
+pcf8523rtc_clock_read(struct pcf8523rtc_softc *sc, struct clock_ymdhms *dt)
 {
 	uint8_t regs[PCF8523_NRTC_REGS];
 	uint8_t cmd = PCF8523_SECONDS;
@@ -218,7 +218,7 @@ pcfrtc_clock_read(struct pcfrtc_softc *sc, struct clock_ymdhms *dt)
 	    iic_exec(sc->sc_tag, I2C_OP_READ_WITH_STOP, sc->sc_address,
 	    NULL, 0, regs, PCF8523_NRTC_REGS, I2C_F_POLL)) {
 		iic_release_bus(sc->sc_tag, I2C_F_POLL);
-		printf("%s: pcfrtc_clock_read: failed to read rtc\n",
+		printf("%s: pcf8523rtc_clock_read: failed to read rtc\n",
 		    sc->sc_dev.dv_xname);
 		return (0);
 	}
@@ -241,7 +241,7 @@ pcfrtc_clock_read(struct pcfrtc_softc *sc, struct clock_ymdhms *dt)
 }
 
 int
-pcfrtc_clock_write(struct pcfrtc_softc *sc, struct clock_ymdhms *dt)
+pcf8523rtc_clock_write(struct pcf8523rtc_softc *sc, struct clock_ymdhms *dt)
 {
 	uint8_t regs[PCF8523_NRTC_REGS];
 	uint8_t cmd = PCF8523_SECONDS;
@@ -262,7 +262,7 @@ pcfrtc_clock_write(struct pcfrtc_softc *sc, struct clock_ymdhms *dt)
 	if (iic_exec(sc->sc_tag, I2C_OP_WRITE_WITH_STOP, sc->sc_address,
 	    &cmd, sizeof cmd, regs, PCF8523_NRTC_REGS, I2C_F_POLL)) {
 		iic_release_bus(sc->sc_tag, I2C_F_POLL);
-		printf("%s: pcfrtc_clock_write: failed to write rtc\n",
+		printf("%s: pcf8523rtc_clock_write: failed to write rtc\n",
 		    sc->sc_dev.dv_xname);
 		return (0);
 	}
