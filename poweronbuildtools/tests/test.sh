@@ -2,6 +2,7 @@
 
 echo -e "\033[38;5;6m[INFO]\033[0m Beginning test script"
 
+TOTAL_TESTS=3
 FAILED_TESTS=0
 PASSED_TESTS=0
 
@@ -19,5 +20,7 @@ fi
 
 echo -e "\033[38;5;6m[INFO]\033[0m Ending test script"
 
+# Print the results
 echo -e "\033[38;5;2m[INFO] Tests Passed:\033[0m ${PASSED_TESTS}"
 echo -e "\033[38;5;1m[INFO] Tests Failed:\033[0m ${FAILED_TESTS}"
+echo -e "\033[38;5;6m[INFO] Results:\033[0m ${PASSED_TESTS}/${TOTAL_TESTS}"
