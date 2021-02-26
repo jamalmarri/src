@@ -20,7 +20,7 @@ fi
 # Test to see if RTC device is mounted
 # i2cscan iic0 should return 0x68
 FOUND_DEVICE=0
-for FILE in ./iic* ; do
+for FILE in /dev/iic* ; do
   # If it isn't iic0
   if [ $FILE != "iic0" ]; then
     # run i2cscan on the found device
