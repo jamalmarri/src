@@ -22,7 +22,7 @@ fi
 FOUND_DEVICE=0
 for FILE in /dev/iic* ; do
   # If it isn't iic0
-  if [ $FILE != "iic0" ]; then
+  if [ $FILE != "/dev/iic0" ]; then
     # run i2cscan on the found device
     echo -e "\033[38;5;2m[INFO] Found iic device:\033[0m ${FILE}"
     if i2cscan $FILE; then
@@ -30,7 +30,7 @@ for FILE in /dev/iic* ; do
     fi
   fi
 done
-if [ $FOUND_DEVICE == 1 ]; then
+if [ $FOUND_DEVICE -eq 1 ]; then
   echo -e "\033[38;5;2m[SUCCESS]\033[0m Device detected"
   ((PASSED_TESTS=PASSED_TESTS+1))
 else
