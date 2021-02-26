@@ -19,7 +19,24 @@ fi
 # Test2
 # Test to see if RTC device is mounted
 # i2cscan iic0 should return 0x68
-
+FOUND_DEVICE=0
+for FILE in ./iic* ; do
+  # If it isn't iic0
+  if [ $FILE != "iic0" ]; then
+    # run i2cscan on the found device
+    echo -e "\033[38;5;2m[INFO] Found iic device:\033[0m ${FILE}"
+    if i2cscan $FILE; then
+      ((FOUND_DEVICE=1))
+    fi
+  fi
+done
+if [ $FOUND_DEVICE == 1 ]; then
+  echo -e "\033[38;5;2m[SUCCESS]\033[0m Device detected"
+  ((PASSED_TESTS=PASSED_TESTS+1))
+else
+  echo -e "\033[31;1;4m[FAILURE]\033[0m No device detected"
+  ((FAILED_TESTS=FAILED_TESTS+1))
+fi
 
 # Test3
 # Fetch time/date from RTC
