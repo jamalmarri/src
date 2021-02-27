@@ -3,3 +3,7 @@ src/sys/dev/i2c/pcf8523.c // Created
 src/sys/dev/i2c/pcf8523reg.h // Created
 src/sys/dev/i2c/files.i2c // Modified
 src/sys/kern/init_main.c // Modified (Added boot message)
+
+
+/* other files we may want */
+src/sbin/reboot/reboot.c // The file containing halt

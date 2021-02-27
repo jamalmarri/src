@@ -79,7 +79,7 @@ device	maxrtc
 attach	maxrtc at iic
 file	dev/i2c/max6900.c			maxrtc
 
-# NXP/Philips PCF8563 Real Time Clock 
+# NXP/Philips PCF8563 Real Time Clock
 device	pcf8563rtc
 attach	pcf8563rtc at iic
 file	dev/i2c/pcf8563.c			pcf8563rtc
@@ -411,6 +411,6 @@ attach	pcf8574io at iic
 file	dev/i2c/pcf8574.c			pcf8574io
 
 # NXP PCF8523 Real Time Clock RTC
-device pcf8523.c
-attach pcf8523 at iic
-file dev/i2c/pcf8523.c		pcf8523
+device pcf8523rtc
+attach pcf8523rtc at iic
+file dev/i2c/pcf8523.c		pcf8523rtc
